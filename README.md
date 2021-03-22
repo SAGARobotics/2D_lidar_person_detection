@@ -1,5 +1,5 @@
 # Person Detection in 2D Range Data
-This repository implements DROW3 [(arXiv)](https://arxiv.org/abs/1804.02463) and DR-SPAAM [(arXiv)](https://arxiv.org/abs/2004.14079), real-time person detectors using 2D LiDARs mounted at ankle or knee height.
+This repository is a fork of the original repo [here](https://github.com/VisualComputingInstitute/2D_lidar_person_detection) and contains implementation of DROW3 [(arXiv)](https://arxiv.org/abs/1804.02463) and DR-SPAAM [(arXiv)](https://arxiv.org/abs/2004.14079), real-time person detectors using 2D LiDARs mounted at ankle or knee height.
 Pre-trained models (using PyTorch 1.6) can be found in this [Google drive](https://drive.google.com/drive/folders/1Wl2nC8lJ6s9NI1xtWwmxeAUnuxDiiM4W?usp=sharing).
 
 ![](imgs/teaser_1.gif)
