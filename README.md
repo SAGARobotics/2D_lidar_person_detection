@@ -1,18 +1,10 @@
 # Person Detection in 2D Range Data
 This repository implements DROW3 [(arXiv)](https://arxiv.org/abs/1804.02463) and DR-SPAAM [(arXiv)](https://arxiv.org/abs/2004.14079), real-time person detectors using 2D LiDARs mounted at ankle or knee height.
-Also included are experiments from *Self-Supervised Person Detection in 2D Range Data using a Calibrated Camera* [(arXiv)](https://arxiv.org/abs/2012.08890).
 Pre-trained models (using PyTorch 1.6) can be found in this [Google drive](https://drive.google.com/drive/folders/1Wl2nC8lJ6s9NI1xtWwmxeAUnuxDiiM4W?usp=sharing).
 
 ![](imgs/teaser_1.gif)
 
 ## Quick start
-
-First clone and install the repository
-```
-git clone https://github.com/VisualComputingInstitute/2D_lidar_person_detection.git
-cd dr_spaam
-python setup.py install
-```
 
 Use the `Detector` class to run inference
 ```python
@@ -52,14 +44,7 @@ while True:
 
 ![](imgs/dr_spaam_ros_teaser.gif)
 
-![](imgs/dr_spaam_ros_graph.png)
-
-We provide an example ROS node `dr_spaam_ros`. 
-First install `dr_spaam` to your python environment.
-Then compile the ROS package 
-```
-catkin build dr_spaam_ros
-```
+Refer to the [people-detection](https://github.com/LCAS/people-detection) repository for details on installation.
 
 Modify the topics and the path to the pre-trained checkpoint at 
 `dr_spaam_ros/config/` and launch the node
@@ -75,47 +60,34 @@ rosbag play JRDB/test_dataset/rosbags/tressider-2019-04-26_0.bag
 and use RViz to visualize the inference result.
 A simple RViz config is located at `dr_spaam_ros/example.rviz`.
 
-In addition, if you want to test with DROW dataset, you can convert a DROW sequence to a rosbag
-```
-python scripts/drow_data_converter.py --seq <PATH_TO_SEQUENCE> --output drow.bag
-```
-
 ## Training and evaluation
 
-Download the [DROW dataset](https://github.com/VisualComputingInstitute/DROW) and the [JackRabbot dataset](https://jrdb.stanford.edu/),
-and put them under `dr_spaam/data` as below.
-```
-dr_spaam
-├── data
-│   ├── DROWv2-data
-│   │   ├── test
-│   │   ├── train
-│   │   ├── val
-│   ├── JRDB
-│   │   ├── test_dataset
-│   │   ├── train_dataset
-...
-``` 
+For our use case, we would first need to convert the bag file into DROW format and annotate the date to be able to train the detector on the bag data.
 
-First preprocess the JRDB dataset (extract laser measurements from raw rosbag and synchronize with images)
+To do this preprocessing, you need access to the [people-detection](https://github.com/LCAS/people-detection) repository.
 ```
-python bin/setup_jrdb_dataset.py
+python scripts/bag_to_csv.py <your_bag_file>.bag
+python scripts/csv_to_drow_format.py <scan_file>.csv
+```
+To annotate people in the drow_format scan file, run
+```
+python anno1602.py <drow_scan_file>.csv -p
+```
+To annotate wheelchairs, run
+```
+python anno1602.py <drow_scan_file>.csv
 ```
 
-To train a network (or evaluate a pretrained checkpoint), run
+To train a network from scratch (or evaluate a pretrained checkpoint), run
 ```
-python bin/train.py --cfg net_cfg.yaml [--ckpt ckpt_file.pth --evaluation]
+python dr_spaam/utils/train.py --cfg net_cfg.yaml [--ckpt ckpt_file.pth --evaluation]
 ```
 where `net_cfg.yaml` specifies configuration for the training (see examples under `cfgs`).
 
-## Self-supervised training with a calibrated camera
-
-If your robot has a calibrated camera (i.e. the transformation between the camera to the LiDAR is known),
-you can generate pseudo labels automatically during deployment and fine-tune the detector (no manual labeling needed).
-We provide a wrapper function `dr_spaam.pseudo_labels.get_regression_target_using_bounding_boxes()` for generating pseudo labels conveniently.
-For experiments using pseudo labels,
-checkout our paper *Self-Supervised Person Detection in 2D Range Data using a Calibrated Camera* [(arXiv)](https://arxiv.org/abs/2012.08890).
-Use checkpoints in this [Google drive](https://drive.google.com/drive/folders/1Wl2nC8lJ6s9NI1xtWwmxeAUnuxDiiM4W?usp=sharing) to reproduce our results.
+To finetune a pretrained checkpoint, run
+```
+python dr_spaam/utils/train_ft.py --cfg net_cfg.yaml --ckpt ckpt_file.pth
+```
 
 ## Inference time
 On DROW dataset (450 points, 225 degrees field of view)
