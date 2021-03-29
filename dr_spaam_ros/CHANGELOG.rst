@@ -2,8 +2,8 @@
 Changelog for package dr_spaam_ros
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.1 (2021-03-29)
+------------------
 * add changes for cpu compatibility
 * update makefile
 * remove pip install commands

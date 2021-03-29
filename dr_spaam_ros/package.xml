@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>dr_spaam_ros</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <description>SAGA Robotics fork of ROS interface for DR-SPAAM detector</description>
 
   <maintainer email="rishabh.madan@sagarobotics.com">rishabh</maintainer>
